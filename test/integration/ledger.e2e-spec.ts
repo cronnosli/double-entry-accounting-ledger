@@ -36,7 +36,9 @@ describe('🧾 Ledger API', () => {
       } catch {}
       await new Promise((r) => setTimeout(r, 300));
     }
-    if (!ok) throw new Error(`Servidor não respondeu em ${BASE}`);
+    if (!ok) {
+      throw new Error(`Servidor não respondeu em ${BASE}`);
+    }
   });
 
   it('POST /accounts → cria conta (id fornecido, nome opcional, balance default 0, direction obrigatório)', async () => {

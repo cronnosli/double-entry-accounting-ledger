@@ -33,7 +33,9 @@ export class TransactionsControllerV1 {
       const tx = await this.transactionsUseCase.register(mappedDto);
       return tx;
     } catch (e: unknown) {
-      if (e instanceof Error) return { error: e.message };
+      if (e instanceof Error) {
+        return { error: e.message };
+      }
       return { error: 'Unknown error' };
     }
   }

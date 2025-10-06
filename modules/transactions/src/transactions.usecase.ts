@@ -13,7 +13,9 @@ export class TransactionsUseCase {
 
   private get(id: string) {
     const transaction = this.transactionRepo.findById(id);
-    if (!transaction) throw new Error('Transaction not found');
+    if (!transaction) {
+      throw new Error('Transaction not found');
+    }
     return transaction;
   }
 

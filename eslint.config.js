@@ -7,8 +7,11 @@ import decoratorPosition from 'eslint-plugin-decorator-position';
 
 export default [
   {
+    ignores: ['node_modules/**', 'dist/**', 'coverage/**'],
+  },
+
+  {
     files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['migrations/*'],
 
     languageOptions: {
       parser: tsParser,
@@ -26,23 +29,19 @@ export default [
     },
 
     rules: {
-      // TS
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/no-var-requires': 'error',
 
-      // JS
       'prefer-const': 'error',
       'no-var': 'error',
       'no-console': 'error',
 
-      // Estilo
       quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'always'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
 
-      // Imports
       'import/order': [
         'error',
         {
@@ -51,10 +50,8 @@ export default [
         },
       ],
 
-      // Prettier
       'prettier/prettier': 'error',
 
-      // Decorators
       'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
       'decorator-position/decorator-position': [
         'error',
@@ -63,6 +60,7 @@ export default [
           methods: 'above',
         },
       ],
+      'curly': ['error', 'all'],
     },
   },
 ];
