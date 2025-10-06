@@ -20,6 +20,10 @@ A modular **double-entry accounting ledger** built with NestJS + Fastify. It exp
   * Unit: Jest + ts-jest.
   * E2E: real HTTP via Node’s `fetch` (no supertest).
 
+### CI Pipeline
+
+Improved CI pipeline in PR [#2](https://github.com/cronnosli/double-entry-accounting-ledger/pull/2)
+
 ---
 
 ## 🧱 Project Layout
