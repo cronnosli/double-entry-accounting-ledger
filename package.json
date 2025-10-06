@@ -16,6 +16,7 @@
     "test": "jest --coverage",
     "test:e2e": "jest -c jest.e2e.config.ts",
     "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --coverageReporters=text --coverageReporters=json-summary --no-cache --coverageThreshold='{ \"global\": { \"statements\": 90 } }'",
     "prepare": "husky install"
   },
   "dependencies": {
