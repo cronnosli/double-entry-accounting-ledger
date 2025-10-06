@@ -1,17 +1,72 @@
-name: CI
+name: CI Pipeline
+
 on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      # 1️⃣ Instalar pnpm antes de usar cache
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      # 2️⃣ Agora configurar Node com cache pnpm
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test -- --coverage
-      - run: npm run build
+          cache: "pnpm"
+
+      # 3️⃣ Instalar dependências
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test with coverage
+        run: pnpm test:ci
+
+      - name: 📊 Coverage comment
+        if: always()
+        continue-on-error: true
+        uses: MishaKav/jest-coverage-comment@v1.0.12
+        with:
+          github-token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          coverage-summary-path: ./coverage/coverage-summary.json
+          summary-title: "📊 Coverage Overview"
+          create-new-comment: true
+
+      - name: 🚨 Post failure message
+        if: failure()
+        continue-on-error: true
+        env:
+          TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Posting failure message for PR #$PR_NUMBER..."
+            curl -s -H "Authorization: Bearer $TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 -X POST \
+                 -d "{\"body\":\":warning: Unit tests or coverage requirements failed.\"}" \
+                 "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" \
+              || echo "⚠️ Could not comment (insufficient permissions)."
+          else
+            echo "⚠️ No PR context available — skipping comment."
+          fi
+
+      - name: Build project
+        run: pnpm build
