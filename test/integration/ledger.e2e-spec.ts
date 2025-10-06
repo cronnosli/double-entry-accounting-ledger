@@ -37,11 +37,11 @@ describe('🧾 Ledger API', () => {
       await new Promise((r) => setTimeout(r, 300));
     }
     if (!ok) {
-      throw new Error(`Servidor não respondeu em ${BASE}`);
+      throw new Error(`Server did not respond at ${BASE}`);
     }
   });
 
-  it('POST /accounts → cria conta (id fornecido, nome opcional, balance default 0, direction obrigatório)', async () => {
+  it('POST /accounts → creates account (id provided, name optional, default balance 0, direction required)', async () => {
     const accId = uuid();
     const { status, data } = await request<Json>('POST', '/accounts', {
       id: accId,
@@ -53,7 +53,7 @@ describe('🧾 Ledger API', () => {
     expect(data).toMatchObject({ id: accId, name: 'Cash', direction: 'debit', balance: 0 });
   });
 
-  it('POST /accounts → rejeita id duplicado', async () => {
+  it('POST /accounts → rejects duplicate id', async () => {
     const accId = uuid();
     await request('POST', '/accounts', { id: accId, direction: 'debit' });
     const { data } = await request<Json>('POST', '/accounts', {
@@ -64,12 +64,12 @@ describe('🧾 Ledger API', () => {
     expect(typeof (data as any).error).toBe('string');
   });
 
-  it('POST /accounts → rejeita ausência de direction', async () => {
+  it('POST /accounts → rejects missing direction', async () => {
     const { data } = await request<Json>('POST', '/accounts', { name: 'NoDir' });
     expect(typeof (data as any).error).toBe('string');
   });
 
-  it('GET /accounts/:id → retorna conta existente; 404 quando não existe', async () => {
+  it('GET /accounts/:id → returns existing account; 404 when not found', async () => {
     const accId = uuid();
     await request('POST', '/accounts', { id: accId, direction: 'debit' });
 
@@ -81,7 +81,7 @@ describe('🧾 Ledger API', () => {
     expect(missing.status).toBe(404);
   });
 
-  it('POST /transactions → aplica transação balanceada e atualiza saldos (debit +100, credit +100)', async () => {
+  it('POST /transactions → applies balanced transaction and updates balances (debit +100, credit +100)', async () => {
     const debitId = uuid();
     const creditId = uuid();
     await request('POST', '/accounts', { id: debitId, name: 'Cash', direction: 'debit' });
@@ -106,7 +106,7 @@ describe('🧾 Ledger API', () => {
     expect(accC.data).toHaveProperty('balance', 100);
   });
 
-  it('Regra: direções diferentes subtraem (debit com crédito; credit com débito)', async () => {
+  it('Rule: different directions subtract (debit with credit; credit with debit)', async () => {
     const debitId = uuid();
     const offsetC = uuid();
     await request('POST', '/accounts', {
@@ -150,7 +150,7 @@ describe('🧾 Ledger API', () => {
     expect(c.data).toHaveProperty('balance', 0);
   });
 
-  it('POST /transactions → rejeita não balanceada (débitos ≠ créditos)', async () => {
+  it('POST /transactions → rejects unbalanced transaction (debits ≠ credits)', async () => {
     const a1 = uuid();
     const a2 = uuid();
     await request('POST', '/accounts', { id: a1, direction: 'debit' });
@@ -167,7 +167,7 @@ describe('🧾 Ledger API', () => {
     expect(typeof (res.data as any).error).toBe('string');
   });
 
-  it('POST /transactions → rejeita transação com menos de 2 entradas', async () => {
+  it('POST /transactions → rejects transaction with fewer than 2 entries', async () => {
     const a1 = uuid();
     const off = uuid();
     await request('POST', '/accounts', { id: a1, direction: 'debit' });
@@ -181,7 +181,7 @@ describe('🧾 Ledger API', () => {
     expect(typeof (res.data as any).error).toBe('string');
   });
 
-  it('POST /transactions → rejeita conta inexistente', async () => {
+  it('POST /transactions → rejects non-existent account', async () => {
     const res = await request<Json>('POST', '/transactions', {
       name: 'Missing account',
       entries: [
@@ -193,7 +193,7 @@ describe('🧾 Ledger API', () => {
     expect(typeof (res.data as any).error).toBe('string');
   });
 
-  it('POST /transactions → rejeita amount negativo', async () => {
+  it('POST /transactions → rejects negative amount', async () => {
     const a1 = uuid();
     const a2 = uuid();
     await request('POST', '/accounts', { id: a1, direction: 'debit' });
@@ -210,7 +210,7 @@ describe('🧾 Ledger API', () => {
     expect(typeof (res.data as any).error).toBe('string');
   });
 
-  it('POST /transactions → rejeita id duplicado de transação', async () => {
+  it('POST /transactions → rejects duplicate transaction id', async () => {
     const a1 = uuid();
     const a2 = uuid();
     await request('POST', '/accounts', { id: a1, direction: 'debit' });
