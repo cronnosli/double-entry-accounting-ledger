@@ -1,0 +1,2 @@
+export const ACCOUNTS_STORE = Symbol('ACCOUNTS_STORE');
+export const ACCOUNTS_REPOSITORY = Symbol('ACCOUNTS_REPOSITORY');

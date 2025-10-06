@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "dist",
+    "incremental": true,
+    "strict": true,
+    "paths": {
+      "@auth/*": ["./modules/auth/src/*"],
+      "@accounts/*": ["./modules/accounts/src/*"],
+      "@transactions/*": ["./modules/transactions/src/*"],
+      "@core/*": ["./core/*"],
+      "@app/*": ["./apps/src/*"],
+      "@shared/*": ["./shared/*"]
+    }
+  },
+  "types": ["node"],
+  "exclude": ["node_modules", "dist"]
+}
